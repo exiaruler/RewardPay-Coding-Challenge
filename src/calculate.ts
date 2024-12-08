@@ -42,13 +42,25 @@ function convertToCurrency(value:number){
             //console.log(beginIndex+" "+endIndex);
             //console.log(splitValue);
         }
-        output=splitArr.reverse().join(',');
+        output="$"+splitArr.reverse().join(',');
     }else{
-        output="$"+valueString;
-        
+        output="$"+valueString;   
     }
-    console.log(output);
     return output;
+}
+//
+function convertToPercentage(value:number,total:number){
+    let percentageString="0%";
+    let percentage=(value/total)*100;
+    if(!Number.isInteger(percentage)){
+        let roundOff=percentage.toFixed(1);
+        percentageString=roundOff.toString()+"%";
+    }else{
+        percentageString=percentage.toString()+"%";
+    }
+    console.log(percentage);
+    console.log(percentageString);
+    return percentageString;
 }
 var results={
     Revenue:'0',
@@ -60,4 +72,11 @@ var results={
 var totalRev=getAccountAmountTotal("revenue");
 var totalExp=getAccountAmountTotal("expense");
 var grossProfitTot=getGrossProfitTotal();
-convertToCurrency(12345);
+var netProfitCal=totalRev-totalExp;
+
+//console.log(netProfitCal);
+results.Revenue=convertToCurrency(totalRev);
+results.Expenses=convertToCurrency(totalExp);
+results.GrossProfitMargin=convertToPercentage(grossProfitTot,totalRev);
+results.NetProfitMargin=convertToPercentage(netProfitCal,totalRev);
+console.log(results);
