@@ -1,5 +1,5 @@
 import jsonFile from "../data.json";
-import accountInterface from "./accountinterface";
+import accountInterface from "./interface/accountInterface";
 const conversion=require("./conversion");
 
 // get total amount of account by category
@@ -26,9 +26,7 @@ function getAssetAmountTotal(valueType:string){
     let results=jsonFile.data.filter((account:accountInterface)=>
         account.account_category=="assets"&&account.value_type==valueType&&(account.account_type=="current"||account.account_type=="bank"||account.account_type=="current_accounts_receivable")
     );
-    //console.log(results);
     total=results.reduce((total,value)=>total+value.total_value,total);
-    //console.log(total);
     return total;
 }
 function getLiabilityAmountTotal(valueType:string){
@@ -37,7 +35,6 @@ function getLiabilityAmountTotal(valueType:string){
         account.account_category=="liability"&&account.value_type==valueType&&(account.account_type=="current"||account.account_type=="current_accounts_payable")
     );
     total=results.reduce((total,value)=>total+value.total_value,total);
-    //console.log(total);
     return total;
 }
 
@@ -56,7 +53,6 @@ var netProfitCal=totalRev-totalExp;
 // calculate working captial
 var asset=getAssetAmountTotal("debit")-getAssetAmountTotal("credit");
 var libaility=getLiabilityAmountTotal("credit")-getLiabilityAmountTotal("debit");
-var test=conversion.convertToPercentage(3.0,50);
 results.Revenue=conversion.convertToCurrency(totalRev);
 results.Expenses=conversion.convertToCurrency(totalExp);
 results.GrossProfitMargin=conversion.convertToPercentage(grossProfitTot,totalRev);

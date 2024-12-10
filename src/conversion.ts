@@ -1,10 +1,9 @@
 // conversion methods
 // converts number to string in currency format
-function convertToCurrency(value:number){
+function convertToCurrency(value:number):string{
     let output="0";
     // remove cents
     value=Math.trunc(value);
-
     // to string
     let valueString=value.toString();
     let splits=Math.trunc(valueString.length/3);
@@ -27,18 +26,19 @@ function convertToCurrency(value:number){
     return output;
  }
 // convert value and total to percentage
-function convertToPercentage(value:number,total:number){
+function convertToPercentage(value:number,total:number):string{
     let percentageString="0%";
     let percentage=(value/total)*100;
     percentage=Math.floor(percentage*100)/100;
-    if(!Number.isInteger(percentage)){
-        let roundOff=percentage.toFixed(1);
+    // round off and retrieve first decimal point number for validation
+    let decimalNum=Number.parseInt((Math.round(percentage * 10) / 10).toString().split(".")[1]);
+    if(!Number.isInteger(percentage)&&decimalNum>0){
+        let roundOff=Math.round(percentage * 10) / 10
         percentageString=roundOff.toString()+"%";
     }else{
+        percentage=Math.round(percentage);
         percentageString=percentage.toString()+"%";
     }
-    console.log(percentage);
-    console.log(percentageString);
     return percentageString;
  }
 
