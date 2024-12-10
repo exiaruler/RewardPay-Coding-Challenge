@@ -11,5 +11,8 @@
   "dependencies": {
     "coding-challenge": "file:",
     "typescript": "^5.7.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1"
   }
 }

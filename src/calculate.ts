@@ -1,67 +1,46 @@
 import jsonFile from "../data.json";
+import accountInterface from "./accountinterface";
+const conversion=require("./conversion");
 
 // get total amount of account by category
 function getAccountAmountTotal(category:string){
     let total=0;
-    let results=jsonFile.data.filter((account:any)=>
+    let results=jsonFile.data.filter((account:accountInterface)=>
         account.account_category==category
     );
     total=results.reduce((total,value)=>total+value.total_value,total);
-    //console.log(total);
     return total;
 }
 // get total amount for sales account that is debit
 function getGrossProfitTotal(){
     let total=0;
-    let results=jsonFile.data.filter((account:any)=>
+    let results=jsonFile.data.filter((account:accountInterface)=>
         account.account_type=="sales"&&account.value_type=="debit"
     );
     total=results.reduce((total,value)=>total+value.total_value,total);
     return total;
 }
-// converts number to string in currency format
-function convertToCurrency(value:number){
-    let output="0";
-    // remove cents
-    value=Math.trunc(value);
+// get total amount for assets by value type
+function getAssetAmountTotal(valueType:string){
+    let total=0;
+    let results=jsonFile.data.filter((account:accountInterface)=>
+        account.account_category=="assets"&&account.value_type==valueType&&(account.account_type=="current"||account.account_type=="bank"||account.account_type=="current_accounts_receivable")
+    );
+    //console.log(results);
+    total=results.reduce((total,value)=>total+value.total_value,total);
+    //console.log(total);
+    return total;
+}
+function getLiabilityAmountTotal(valueType:string){
+    let total=0;
+    let results=jsonFile.data.filter((account:accountInterface)=>
+        account.account_category=="liability"&&account.value_type==valueType&&(account.account_type=="current"||account.account_type=="current_accounts_payable")
+    );
+    total=results.reduce((total,value)=>total+value.total_value,total);
+    //console.log(total);
+    return total;
+}
 
-    // to string
-    let valueString=value.toString();
-    let splits=Math.trunc(valueString.length/3);
-    if(valueString.length>3){
-        // split string into strings that have a size of 3 or less
-        let beginIndex=valueString.length-3;
-        let endIndex=valueString.length;
-        let splitArr=[];
-        for(let i=0; i<=splits; i++){
-            let splitValue=valueString.slice(beginIndex,endIndex);
-            if(splitValue!="")splitArr.push(splitValue);
-            endIndex-=3;
-            beginIndex-=3;
-            if(beginIndex<0) beginIndex=0;
-            //console.log(beginIndex+" "+endIndex);
-            //console.log(splitValue);
-        }
-        output="$"+splitArr.reverse().join(',');
-    }else{
-        output="$"+valueString;   
-    }
-    return output;
-}
-//
-function convertToPercentage(value:number,total:number){
-    let percentageString="0%";
-    let percentage=(value/total)*100;
-    if(!Number.isInteger(percentage)){
-        let roundOff=percentage.toFixed(1);
-        percentageString=roundOff.toString()+"%";
-    }else{
-        percentageString=percentage.toString()+"%";
-    }
-    console.log(percentage);
-    console.log(percentageString);
-    return percentageString;
-}
 var results={
     Revenue:'0',
     Expenses:'0',
@@ -69,14 +48,20 @@ var results={
     NetProfitMargin:'0%',
     WorkingCaptialRatio:'0%'
 };
+
 var totalRev=getAccountAmountTotal("revenue");
 var totalExp=getAccountAmountTotal("expense");
 var grossProfitTot=getGrossProfitTotal();
 var netProfitCal=totalRev-totalExp;
+// calculate working captial
+var asset=getAssetAmountTotal("debit")-getAssetAmountTotal("credit");
+var libaility=getLiabilityAmountTotal("credit")-getLiabilityAmountTotal("debit");
+var test=conversion.convertToPercentage(3.0,50);
+results.Revenue=conversion.convertToCurrency(totalRev);
+results.Expenses=conversion.convertToCurrency(totalExp);
+results.GrossProfitMargin=conversion.convertToPercentage(grossProfitTot,totalRev);
+results.NetProfitMargin=conversion.convertToPercentage(netProfitCal,totalRev);
+results.WorkingCaptialRatio=conversion.convertToPercentage(asset,libaility);
 
-//console.log(netProfitCal);
-results.Revenue=convertToCurrency(totalRev);
-results.Expenses=convertToCurrency(totalExp);
-results.GrossProfitMargin=convertToPercentage(grossProfitTot,totalRev);
-results.NetProfitMargin=convertToPercentage(netProfitCal,totalRev);
 console.log(results);
+
