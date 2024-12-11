@@ -39,11 +39,11 @@ function getLiabilityAmountTotal(valueType:string){
 }
 
 var results={
-    Revenue:'0',
-    Expenses:'0',
-    GrossProfitMargin:'0%',
-    NetProfitMargin:'0%',
-    WorkingCaptialRatio:'0%'
+    revenue:'0',
+    expenses:'0',
+    gross_profit_margin:'0%',
+    net_profit_margin:'0%',
+    working_captial_ratio:'0%'
 };
 
 var totalRev=getAccountAmountTotal("revenue");
@@ -53,11 +53,12 @@ var netProfitCal=totalRev-totalExp;
 // calculate working captial
 var asset=getAssetAmountTotal("debit")-getAssetAmountTotal("credit");
 var libaility=getLiabilityAmountTotal("credit")-getLiabilityAmountTotal("debit");
-results.Revenue=conversion.convertToCurrency(totalRev);
-results.Expenses=conversion.convertToCurrency(totalExp);
-results.GrossProfitMargin=conversion.convertToPercentage(grossProfitTot,totalRev);
-results.NetProfitMargin=conversion.convertToPercentage(netProfitCal,totalRev);
-results.WorkingCaptialRatio=conversion.convertToPercentage(asset,libaility);
 
+// results print
+results.revenue=conversion.convertToCurrency(totalRev);
+results.expenses=conversion.convertToCurrency(totalExp);
+results.gross_profit_margin=conversion.convertToPercentage(grossProfitTot,totalRev);
+results.net_profit_margin=conversion.convertToPercentage(netProfitCal,totalRev);
+results.working_captial_ratio=conversion.convertToPercentage(asset,libaility);
 console.log(results);
 

@@ -1,4 +1,4 @@
-// conversion methods
+// conversion functions
 // converts number to string in currency format
 function convertToCurrency(value:number):string{
     let output="0";
